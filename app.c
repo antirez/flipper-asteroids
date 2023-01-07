@@ -26,7 +26,7 @@
  * move between two keys. However it is important that the extra time the
  * player needs to press the button to accelerate instead of just firing
  * is precisely selected to provide a smooth experience. After a few
- * attempts, it looks like 70 milliesconds is the right spot. */
+ * attempts, it looks like 70 milliseconds is the right spot. */
 #define SHIP_ACCELERATION_KEYPRESS_TIME 70
 
 /* ============================ Data structures ============================= */
@@ -36,7 +36,7 @@ typedef struct Ship {
     y,                  /* Ship y position. */
     vx,                 /* x velocity. */
     vy,                 /* y velocity. */
-    rot;                /* Current rotation. 2*PI full ortation. */
+    rot;                /* Current rotation. 2*PI full rotation. */
 } Ship;
 
 typedef struct Bullet {
@@ -59,11 +59,11 @@ typedef struct AsteroidsApp {
     Gui *gui;
     ViewPort *view_port;     /* We just use a raw viewport and we render
                                 everything into the low level canvas. */
-    FuriMessageQueue *event_queue;  /* Keypress events go here. */
+    FuriMessageQueue *event_queue;  /* Key press events go here. */
 
     /* Game state. */
     int running;            /* Once false exists the app. */
-    bool gameover;          /* Gameover status. */
+    bool gameover;          /* Game over status. */
     uint32_t ticks;         /* Game ticks. Increments at each refresh. */
     uint32_t score;         /* Game score. */
     uint32_t lives;         /* Number of lives in the current game. */
@@ -90,7 +90,7 @@ typedef struct AsteroidsApp {
     bool fire;                 /* Short press detected: fire a bullet. */
 } AsteroidsApp;
 
-/* ============================== Prototyeps ================================ */
+/* ============================== Prototypes ================================ */
 
 // Only functions called before their definition are here.
 
@@ -122,7 +122,7 @@ Poly ShipFirePoly = {
     3
 };
 
-/* Rotate the point of the poligon 'poly' and store the new rotated
+/* Rotate the point of the polygon 'poly' and store the new rotated
  * polygon in 'rot'. The polygon is rotated by an angle 'a', with
  * center at 0,0. */
 void rotate_poly(Poly *rot, Poly *poly, float a) {
@@ -175,7 +175,7 @@ void draw_bullet(Canvas *const canvas, Bullet *b) {
 /* Draw an asteroid. The asteroid shapes is computed on the fly and
  * is not stored in a permanent shape structure. In order to generate
  * the shape, we use an initial fixed shape that we resize according
- * to the asteroid size, perturbate according to the asteroid shape
+ * to the asteroid size, perturbed according to the asteroid shape
  * seed, and finally draw it rotated of the right amount. */
 void draw_asteroid(Canvas *const canvas, Asteroid *ast) {
     Poly ap;
@@ -381,7 +381,7 @@ void remove_asteroid(AsteroidsApp *app, int id) {
 /* Called when an asteroid was reached by a bullet. The asteroid
  * hit is the one with the specified 'id'. */
 void asteroid_was_hit(AsteroidsApp *app, int id) {
-    float sizelimit = 6; // Smaller than that polverize in one shot.
+    float sizelimit = 6; // Smaller than that, they disappear in one shot.
     Asteroid *a = &app->asteroids[id];
 
     /* Asteroid is large enough to break into fragments. */
@@ -405,8 +405,8 @@ void asteroid_was_hit(AsteroidsApp *app, int id) {
     }
 }
 
-/* Set gameover state. When in game-over mode, the game displays a gameover
- * text with a background of many asteroids floating around. */
+/* Set game over state. When in game-over mode, the game displays a
+ * game over text with a background of many asteroids floating around. */
 void game_over(AsteroidsApp *app) {
     restart_game_after_gameover(app);
     app->gameover = true;
@@ -438,7 +438,7 @@ void restart_game(AsteroidsApp *app) {
     app->asteroids_num = 0;
 }
 
-/* Called after gameover to restart the game. This function
+/* Called after game over to restart the game. This function
  * also calls restart_game(). */
 void restart_game_after_gameover(AsteroidsApp *app) {
     app->gameover = false;
@@ -531,7 +531,7 @@ void game_tick(void *ctx) {
     } else if (app->gameover) {
     /* 2. Game over. We need to update only background asteroids. In this
      * state the game just displays a GAME OVER text with the floating
-     * asteroids in backgroud. */
+     * asteroids in background. */
         if (key_pressed_time(app,InputKeyOk) > 100) {
             restart_game_after_gameover(app);
         }
@@ -540,7 +540,7 @@ void game_tick(void *ctx) {
         return;
     }
 
-    /* Handle keypresses. */
+    /* Handle key presses. */
     if (app->pressed[InputKeyLeft]) app->ship.rot -= .35;
     if (app->pressed[InputKeyRight]) app->ship.rot += .35;
     if (key_pressed_time(app,InputKeyOk) > SHIP_ACCELERATION_KEYPRESS_TIME) {
