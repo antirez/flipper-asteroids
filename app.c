@@ -11,14 +11,23 @@
 #include <gui/scene_manager.h>
 #include <math.h>
 
+#ifndef PI
+#define PI 3.14159265358979f
+#endif
+
 #define TAG "Asteroids" // Used for logging
 #define DEBUG_MSG 1
 #define SCREEN_XRES 128
 #define SCREEN_YRES 64
 #define GAME_START_LIVES 3
-#ifndef PI
-#define PI 3.14159265358979f
-#endif
+
+/* The game uses the OK button both to fire and to accelerate the ship.
+ * This makes it a lot more playable since the finger does not have to
+ * move between two keys. However it is important that the extra time the
+ * player needs to press the button to accelerate instead of just firing
+ * is precisely selected to provide a smooth experience. After a few
+ * attempts, it looks like 70 milliesconds is the right spot. */
+#define SHIP_ACCELERATION_KEYPRESS_TIME 70
 
 /* ============================ Data structures ============================= */
 
@@ -104,6 +113,12 @@ typedef struct Poly {
 Poly ShipPoly = {
     {-3, 0, 3},
     {-3, 6, -3},
+    3
+};
+
+Poly ShipFirePoly = {
+    {-1.5, 0, 1.5},
+    {-3, -6, -3},
     3
 };
 
@@ -236,6 +251,8 @@ void render_callback(Canvas *const canvas, void *ctx) {
 
     /* Draw ship, asteroids, bullets. */
     draw_poly(canvas,&ShipPoly,app->ship.x,app->ship.y,app->ship.rot);
+    if (key_pressed_time(app,InputKeyOk) > SHIP_ACCELERATION_KEYPRESS_TIME)
+        draw_poly(canvas,&ShipFirePoly,app->ship.x,app->ship.y,app->ship.rot);
 
     for (int j = 0; j < app->bullets_num; j++)
         draw_bullet(canvas,&app->bullets[j]);
@@ -428,7 +445,7 @@ void restart_game_after_gameover(AsteroidsApp *app) {
     app->ticks = 0;
     app->score = 0;
     app->ship_hit = 0;
-    app->lives = GAME_START_LIVES;
+    app->lives = GAME_START_LIVES-1; /* -1 to account for current one. */
     restart_game(app);
 }
 
@@ -526,7 +543,7 @@ void game_tick(void *ctx) {
     /* Handle keypresses. */
     if (app->pressed[InputKeyLeft]) app->ship.rot -= .35;
     if (app->pressed[InputKeyRight]) app->ship.rot += .35;
-    if (key_pressed_time(app,InputKeyOk) > 70) {
+    if (key_pressed_time(app,InputKeyOk) > SHIP_ACCELERATION_KEYPRESS_TIME) {
         app->ship.vx -= 0.5*(float)sin(app->ship.rot);
         app->ship.vy += 0.5*(float)cos(app->ship.rot);
     } else if (app->pressed[InputKeyDown]) {
