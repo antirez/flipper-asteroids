@@ -33,9 +33,9 @@ cd ~/flipperZero/official/
 git clone --recursive  https://github.com/flipperdevices/flipperzero-firmware.git  ./
 ./fbt
 ```
-* Copy this application folder in `official/application_user`.
+* Copy this application folder into `official/applications_user`.
 * Connect your Flipper via USB.
-* Build and install with: `./fbt launch_app APPSRC=asteroids`.
+* Build and install with: `./fbt launch_app APPSRC=flipper-asteroids`.
 
 ## License
 
