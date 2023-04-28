@@ -24,6 +24,8 @@ to use the Android (or other) application to upload the file,
 you can just take out the SD card, insert it in your computer,
 copy the fine into `apps/Games`, and that's it.
 
+* If you see the error "API version mismatch" when trying to launch the game, try installing the app from source below.
+
 ## Installing the app from source
 
 * Download the Flipper Zero dev kit and build it:
